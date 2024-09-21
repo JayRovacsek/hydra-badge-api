@@ -145,5 +145,119 @@
           };
         };
       }
-    );
+    )
+    // {
+      nixosModules = {
+        default = self.nixosModules.hydra-badge-api;
+
+        hydra-badge-api =
+          {
+            config,
+            lib,
+            pkgs,
+            ...
+          }:
+          let
+            cfg = config.services.hydra;
+            inherit (pkgs) system;
+          in
+          {
+            options = {
+              services.hydra.badgeApi = {
+                enable = lib.mkEnableOption "Enable an opinionated reimplementation of the Hydra badge API";
+
+                group = lib.mkOption {
+                  type = lib.types.str;
+                  default = "hydra-badge-api";
+                  description = "Group under which the API runs";
+                };
+
+                instance = lib.mkOption {
+                  description = "Base hydra instance to query";
+                  default = "https://hydra.nixos.org";
+                  type = lib.types.str;
+                };
+
+                nodePackage = lib.mkOption {
+                  default = pkgs.nodejs_22;
+                  type = lib.types.package;
+                };
+
+                openFirewall = lib.mkOption {
+                  type = lib.types.bool;
+                  default = true;
+                };
+
+                package = lib.mkOption {
+                  default = self.packages.${system}.hydra-badge-api;
+                  type = lib.types.package;
+                };
+
+                port = lib.mkOption {
+                  description = "Port to be utilised by the extended API";
+                  default = 8080;
+                  type = lib.types.port;
+                };
+
+                user = lib.mkOption {
+                  type = lib.types.str;
+                  default = "jellyfin";
+                  description = "User account under which the API runs";
+                };
+              };
+            };
+
+            config = lib.mkIf cfg.enable {
+              networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ cfg.port ];
+
+              systemd.services.hydra-badge-api = {
+                description = "Extended Hydra Badge API";
+                after = [ "network-online.target" ];
+                wants = [ "network-online.target" ];
+                wantedBy = [ "multi-user.target" ];
+
+                environment = {
+                  PORT = builtins.toString cfg.port;
+                  INSTANCE = cfg.instance;
+                };
+
+                serviceConfig = {
+                  Type = "simple";
+                  User = cfg.user;
+                  Group = cfg.group;
+                  UMask = "0077";
+                  # The below surely can be done in a better way - TODO: determine how to present the "main"
+                  # executable in this, or wrap the node package as a single executable
+                  ExecStart = "${lib.getExe cfg.nodePackage} ${cfg.package}/lib/node_modules/${cfg.package.pname}/dist/index.js";
+                  Restart = "on-failure";
+                  TimeoutSec = 15;
+
+                  # Security options:
+                  NoNewPrivileges = true;
+                  SystemCallArchitectures = "native";
+                  RestrictNamespaces = true;
+                  RestrictRealtime = true;
+                  RestrictSUIDSGID = true;
+                  ProtectControlGroups = true;
+                  ProtectHostname = true;
+                  ProtectKernelLogs = true;
+                  ProtectKernelModules = true;
+                  ProtectKernelTunables = true;
+                  LockPersonality = true;
+                  PrivateTmp = true;
+                  PrivateUsers = true;
+                  RemoveIPC = true;
+                };
+              };
+
+              users.users.${cfg.user} = {
+                inherit (cfg) group;
+                isSystemUser = true;
+              };
+
+              users.groups.${cfg.group} = { };
+            };
+          };
+      };
+    };
 }
