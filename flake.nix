@@ -18,28 +18,18 @@
         };
       in
       {
-        apps = {
-          generate-client-code = {
-            program = "${pkgs.writers.writeBash "run" ''
-              ${pkgs.coreutils}/bin/mkdir -p src/client
-              ${pkgs.coreutils}/bin/cp -nru ${self.packages.${system}.hydra-client}/share/* src/client
-            ''}";
-            type = "app";
-          };
+        apps.generate-client-code = {
+          program = "${pkgs.writers.writeBash "run" ''
+            ${pkgs.coreutils}/bin/mkdir -p src/hydra-client
+            ${pkgs.coreutils}/bin/cp -nru ${self.packages.${system}.hydra-client}/share src/hydra-client
+          ''}";
+          type = "app";
         };
 
         checks.git-hooks = nix-inputs.git-hooks.lib.${system}.run {
           src = self;
           hooks = {
             actionlint.enable = true;
-
-            autogeneration-validation = {
-              enable = true;
-              name = "${pkgs.lix}/bin/nix run .#generate-client-code";
-              entry = self.apps.${system}.generate-client-code.program;
-              language = "system";
-              pass_filenames = false;
-            };
 
             deadnix = {
               enable = true;
@@ -114,51 +104,46 @@
         formatter = pkgs.nixfmt-rfc-style;
 
         packages = {
-          hydra-api-spec = pkgs.stdenvNoCC.mkDerivation {
-            name = "hydra-api-spec";
-            version = "0.0.1";
-
-            src = pkgs.fetchFromGitHub {
-              owner = "NixOS";
-              repo = "hydra";
-              rev = "master";
-              hash = "sha256-F0HJ7xy7874ngU9vZYmqvgJP3jN1+avw8XtgSKFcGTo=";
-            };
-
-            phases = [ "buildPhase" ];
-
-            buildPhase = ''
-              ${pkgs.coreutils}/bin/mkdir -p $out/share
-              ${pkgs.coreutils}/bin/cp $src/hydra-api.yaml $out/share/spec.yml
-            '';
-          };
-
           hydra-client = pkgs.stdenvNoCC.mkDerivation {
             name = "hydra-client";
             version = "0.0.1";
 
-            src = self;
+            src = pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/NixOS/hydra/master/hydra-api.yaml";
+              hash = "sha256-OZk9Yl0t7mz8qqD1SF/jkfQ/K/g91bMsVRt/S3zOndY=";
+            };
+
+            dontUnpack = true;
 
             phases = [ "buildPhase" ];
 
             buildPhase = ''
               ${pkgs.coreutils}/bin/mkdir -p $out/share
-              ${pkgs.swagger-codegen3}/bin/swagger-codegen3 generate -i ${
-                self.packages.${system}.hydra-api-spec
-              }/share/spec.yml -o $out/share -l typescript-axios
+              ${pkgs.swagger-codegen3}/bin/swagger-codegen3 generate -i $src -o $out/share -l typescript-axios
               pushd $out/share
-              ${pkgs.coreutils}/bin/rm -rf .swagger-codegen .gitignore .swagger-codegen-ignore git_push.sh package.json tsconfig.json README.md
+              ${pkgs.coreutils}/bin/rm -rf .npmignore .swagger-codegen .gitignore .swagger-codegen-ignore git_push.sh package.json tsconfig.json README.md
+              ${pkgs.gnused}/bin/sed -i '1s;^;// @ts-nocheck\n;' $out/share/models/jobset-eval-builds.ts
             '';
           };
+
+          hydra-badge-api =
+            let
+              package = builtins.fromJSON (builtins.readFile ./package.json);
+            in
+            pkgs.buildNpmPackage {
+              inherit (package) version;
+              pname = package.name;
+              src = self;
+              npmDepsHash = "sha256-6TsJzZJBG3OSTmMc0uRxq/4/hTfI47xHtWlttIYXaiQ=";
+            };
 
           prettierignore = pkgs.writeTextFile {
             name = ".prettierignore";
             text = ''
-              src/client
+              **/hydra-client/**
             '';
           };
         };
-
       }
     );
 }

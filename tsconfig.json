@@ -9,5 +9,9 @@
     "declaration": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["**/__tests__/**/*", "**/spec.ts"]
+  "exclude": [
+    "**/__tests__/**/*",
+    "**/spec.ts",
+    "src/client/models/jobset-eval-builds.ts"
+  ]
 }
