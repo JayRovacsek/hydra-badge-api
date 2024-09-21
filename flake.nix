@@ -164,7 +164,7 @@
             ...
           }:
           let
-            cfg = config.services.hydra;
+            cfg = config.services.hydra.badgeApi;
             inherit (pkgs) system;
           in
           {
