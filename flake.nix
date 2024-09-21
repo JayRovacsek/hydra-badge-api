@@ -1,19 +1,30 @@
 {
-  description = "A very basic flake";
+  description = "A reimplementation of the Hydra badge API";
 
   inputs = {
-    nix-inputs.url = "github:jayrovacsek/nix-inputs";
+    devshell.url = "github:numtide/devshell";
+    flake-utils.url = "github:numtide/flake-utils";
+    git-hooks = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:cachix/git-hooks.nix";
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
   outputs =
-    { self, nix-inputs, ... }:
-    nix-inputs.flake-utils.lib.eachDefaultSystem (
+    {
+      devshell,
+      flake-utils,
+      git-hooks,
+      nixpkgs,
+      self,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nix-inputs.nixpkgs {
-          overlays = [
-            nix-inputs.devshell.overlays.default
-          ];
+        pkgs = import nixpkgs {
+          overlays = [ devshell.overlays.default ];
           inherit system;
         };
       in
@@ -26,7 +37,7 @@
           type = "app";
         };
 
-        checks.git-hooks = nix-inputs.git-hooks.lib.${system}.run {
+        checks.git-hooks = git-hooks.lib.${system}.run {
           src = self;
           hooks = {
             actionlint.enable = true;
@@ -36,10 +47,7 @@
               settings.edit = true;
             };
 
-            nixfmt = {
-              enable = true;
-              package = pkgs.nixfmt-rfc-style;
-            };
+            nixfmt-rfc-style.enable = true;
 
             prettier = {
               enable = true;
@@ -55,9 +63,7 @@
               enable = true;
               settings = {
                 binary = false;
-                ignored-words =
-                  [
-                  ];
+                ignored-words = [ ];
                 locale = "en-au";
               };
             };
@@ -179,7 +185,7 @@
                 };
 
                 nodePackage = lib.mkOption {
-                  default = pkgs.nodejs_22;
+                  default = pkgs.nodejs_latest;
                   type = lib.types.package;
                 };
 
