@@ -1,5 +1,16 @@
 import { DefaultApi, JobsetOverviewInner } from "./hydra-client";
 
+interface shieldBadge {
+  color: string;
+  isError: boolean;
+  label: string;
+  labelColor: string;
+  logoColor: string;
+  message: string;
+  namedLogo: string;
+  schemaVersion: number;
+}
+
 export class Hydra {
   instance: string;
   client: DefaultApi;
@@ -14,17 +25,16 @@ export class Hydra {
     this.client = new DefaultApi(configuration);
   }
 
-  jobsetShield = (jobset?: JobsetOverviewInner) => {
+  jobsetShield = (jobset?: JobsetOverviewInner): shieldBadge => {
     if (jobset === undefined) {
       return {
-        cacheSeconds: 3000,
         color: "orange",
+        isError: true,
         label: "invalid",
         labelColor: "black",
-        link: [],
-        logo: "nixos",
         logoColor: "blue",
         message: "jobset",
+        namedLogo: "nixos",
         schemaVersion: 1,
       };
     }
@@ -34,15 +44,12 @@ export class Hydra {
     const isPassing = jobset?.nrfailed === 0;
 
     return {
-      cacheSeconds: 300,
       color: isPassing ? "green" : "red",
+      isError: isPassing,
       label: `${jobset?.project}: ${jobset?.name}`,
       labelColor: "black",
-      link: [
-        `${this.instance}/jobset/${jobset?.project}/${jobset?.name}/latest-eval`,
-      ],
-      logo: "nixos",
       logoColor: "blue",
+      namedLogo: "nixos",
       message: isPassing
         ? "passing"
         : `${jobset.nrtotal - jobset.nrfailed} / ${jobset.nrtotal}`,
