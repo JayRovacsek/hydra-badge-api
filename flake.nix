@@ -207,7 +207,7 @@
 
                 user = lib.mkOption {
                   type = lib.types.str;
-                  default = "jellyfin";
+                  default = "hydra-badge-api";
                   description = "User account under which the API runs";
                 };
               };
