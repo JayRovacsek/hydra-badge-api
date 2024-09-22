@@ -11,7 +11,7 @@ const instance = process.env.INSTANCE ?? "https://hydra.nixos.org";
 
 const hydra = new Hydra(instance);
 
-app.get("/job/:project/:jobset/shield", async (req, res) => {
+app.get("/badge/:project/:jobset", async (req, res) => {
   const { jobset, project } = req.params;
   try {
     const jobsets = await hydra.client.apiJobsetsGet(project);
