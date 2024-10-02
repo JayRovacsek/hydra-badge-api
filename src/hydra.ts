@@ -51,7 +51,7 @@ export class Hydra {
       logoColor: "blue",
       namedLogo: "nixos",
       message: isPassing
-        ? "passing"
+        ? `${jobset.nrtotal} / ${jobset.nrtotal}`
         : `${jobset.nrtotal - jobset.nrfailed} / ${jobset.nrtotal}`,
       schemaVersion: 1,
     };
