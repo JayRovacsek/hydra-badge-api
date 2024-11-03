@@ -63,7 +63,10 @@
               enable = true;
               settings = {
                 binary = false;
-                ignored-words = [ ];
+                ignored-words = [
+                  "canceled"
+                  "Serialization"
+                ];
                 locale = "en-au";
               };
             };
@@ -140,7 +143,7 @@
               inherit (package) version;
               pname = package.name;
               src = self;
-              npmDepsHash = "sha256-6TsJzZJBG3OSTmMc0uRxq/4/hTfI47xHtWlttIYXaiQ=";
+              npmDepsHash = "sha256-f1jbJzrEHcls9NggRVfEs6hBd1udr0SxKrbRgllQN2o=";
             };
 
           prettierignore = pkgs.writeTextFile {
