@@ -2,7 +2,10 @@
   description = "A reimplementation of the Hydra badge API";
 
   inputs = {
-    devshell.url = "github:numtide/devshell";
+    devshell = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:numtide/devshell";
+    };
     flake-utils.url = "github:numtide/flake-utils";
     git-hooks = {
       inputs.nixpkgs.follows = "nixpkgs";
@@ -82,7 +85,7 @@
             trufflehog-verified = {
               enable = pkgs.stdenv.isLinux;
               name = "Trufflehog Search";
-              entry = "${pkgs.trufflehog}/bin/trufflehog git file://. --since-commit HEAD --only-verified --fail --no-update";
+              entry = "${pkgs.trufflehog}/bin/trufflehog git file://. --since-commit HEAD --only-verified --fail";
               language = "system";
               pass_filenames = false;
             };
@@ -143,7 +146,7 @@
               inherit (package) version;
               pname = package.name;
               src = self;
-              npmDepsHash = "sha256-f1jbJzrEHcls9NggRVfEs6hBd1udr0SxKrbRgllQN2o=";
+              npmDepsHash = "sha256-ZfpHN3+Ei6pHsNPjAEiqu9hfUQVxzfo61Sep9QueBWk=";
             };
 
           prettierignore = pkgs.writeTextFile {
