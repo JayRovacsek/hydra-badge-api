@@ -146,7 +146,7 @@
               inherit (package) version;
               pname = package.name;
               src = self;
-              npmDepsHash = "sha256-uHdRVJ2Ap9OYT9KUkJWp1GtCGUOug3wGGvFd3TleZbY=";
+              npmDepsHash = "sha256-O94ihWMidJup7ByH9QxhNePsaKz+KPaffd3LkKFEcTI=";
             };
 
           prettierignore = pkgs.writeTextFile {
