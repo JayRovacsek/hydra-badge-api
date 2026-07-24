@@ -106,7 +106,7 @@
             deadnix
             git-cliff
             nixfmt-rfc-style
-            nodejs-slim_latest
+            nodejs_latest
             prettier
             statix
             typescript
