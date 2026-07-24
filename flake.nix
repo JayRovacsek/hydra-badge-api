@@ -106,10 +106,10 @@
             deadnix
             git-cliff
             nixfmt-rfc-style
-            nodejs_20
-            nodePackages.prettier
-            nodePackages.typescript
+            nodejs-slim_latest
+            prettier
             statix
+            typescript
           ];
         };
 
@@ -122,7 +122,7 @@
 
             src = pkgs.fetchurl {
               url = "https://raw.githubusercontent.com/NixOS/hydra/master/hydra-api.yaml";
-              hash = "sha256-OZk9Yl0t7mz8qqD1SF/jkfQ/K/g91bMsVRt/S3zOndY=";
+              hash = "sha256-zgDO0tAwjZwkR9/5f/iOfeT89GUyYu4cU8vJSigxmco=";
             };
 
             dontUnpack = true;
