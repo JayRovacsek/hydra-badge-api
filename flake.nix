@@ -121,7 +121,7 @@
             version = "0.0.1";
 
             src = pkgs.fetchurl {
-              url = "https://raw.githubusercontent.com/NixOS/hydra/master/hydra-api.yaml";
+              url = "https://raw.githubusercontent.com/NixOS/hydra/16c866f809ae9d7e100e5ed75a33ee0885274cf6/hydra-api.yaml";
               hash = "sha256-zgDO0tAwjZwkR9/5f/iOfeT89GUyYu4cU8vJSigxmco=";
             };
 
