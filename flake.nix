@@ -50,7 +50,7 @@
               settings.edit = true;
             };
 
-            nixfmt-rfc-style.enable = true;
+            nixfmt.enable = true;
 
             prettier = {
               enable = true;
@@ -83,7 +83,7 @@
             };
 
             trufflehog-verified = {
-              enable = pkgs.stdenv.isLinux;
+              enable = pkgs.stdenv.hostPlatform.isLinux;
               name = "Trufflehog Search";
               entry = "${pkgs.trufflehog}/bin/trufflehog git file://. --since-commit HEAD --only-verified --fail";
               language = "system";
@@ -105,7 +105,7 @@
           packages = with pkgs; [
             deadnix
             git-cliff
-            nixfmt-rfc-style
+            nixfmt
             nodejs_latest
             prettier
             statix
@@ -113,7 +113,7 @@
           ];
         };
 
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = pkgs.nixfmt;
 
         packages = {
           hydra-client = pkgs.stdenvNoCC.mkDerivation {
