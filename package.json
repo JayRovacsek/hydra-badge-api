@@ -19,7 +19,8 @@
     "url": "git+https://github.com/JayRovacsek/hydra-badge-api.git"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "node --test src/__tests__/badge.test.ts"
   },
   "version": "0.1.3"
 }
