@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "module": "commonjs",
-    "lib": ["ES2019"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "inlineSourceMap": true,
-    "declaration": true
+    "strict": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": [
-    "**/__tests__/**/*",
-    "**/spec.ts",
-    "src/client/models/jobset-eval-builds.ts"
-  ]
+  "exclude": ["**/__tests__/**/*", "**/spec.ts"]
 }
