@@ -4,12 +4,12 @@
   inputs = {
     devshell = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:numtide/devshell";
+      url = "github:numtide/devshell/9e29c63dde99a2d80c94b3d024c9768c01544558";
     };
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-utils.url = "github:numtide/flake-utils/cd489559845d81f673a12885576016c65cbe9363";
     git-hooks = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:cachix/git-hooks.nix";
+      url = "github:cachix/git-hooks.nix/204b6977e00caac19e2313015a598543ca7be150";
     };
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
