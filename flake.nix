@@ -35,7 +35,7 @@
         apps.generate-client-code = {
           program = "${pkgs.writers.writeBash "run" ''
             ${pkgs.coreutils}/bin/mkdir -p src/hydra-client
-            ${pkgs.coreutils}/bin/cp -nru ${self.packages.${system}.hydra-client}/share src/hydra-client
+            ${pkgs.coreutils}/bin/cp -r ${self.packages.${system}.hydra-client}/share/. src/hydra-client
           ''}";
           type = "app";
         };
@@ -135,6 +135,7 @@
               pushd $out/share
               ${pkgs.coreutils}/bin/rm -rf .npmignore .swagger-codegen .gitignore .swagger-codegen-ignore git_push.sh package.json tsconfig.json README.md
               ${pkgs.gnused}/bin/sed -i '1s;^;// @ts-nocheck\n;' $out/share/models/jobset-eval-builds.ts
+              ${pkgs.gnused}/bin/sed -i '1s;^;// @ts-nocheck\n;' $out/share/apis/default-api.ts
             '';
           };
 
